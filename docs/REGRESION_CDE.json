@@ -1,0 +1,40 @@
+{
+  "database": "rp_cde_qa_2662583707",
+  "checks_before": [
+    "Acceso publico, proteccion administrativa y CSRF",
+    "Campos obligatorios, telefono, correo, longitud, geocerca y formato de foto",
+    "Registro persistido, foto visible, seguimiento y comprobante PDF",
+    "Login, dashboard, filtros, paginacion, detalle, estado, observacion, solucion, estadisticas y 6 exportaciones PDF",
+    "Alta, duplicados, edicion, cambio de clave, nuevo login, eliminacion y logout"
+  ],
+  "checks_after": [
+    "Acceso publico, proteccion administrativa y CSRF",
+    "Campos obligatorios, telefono, correo, longitud, geocerca y formato de foto",
+    "Registro persistido, foto visible, seguimiento y comprobante PDF",
+    "Login, dashboard, filtros, paginacion, detalle, estado, observacion, solucion, estadisticas y 6 exportaciones PDF",
+    "Alta, duplicados, edicion, cambio de clave, nuevo login, eliminacion y logout"
+  ],
+  "rendered_pages": 15,
+  "redesigned_pages": [
+    "/ciudadano",
+    "/login",
+    "/confirmacion/1",
+    "/admin",
+    "/reportes",
+    "/reportes?pagina=2",
+    "/reportes?estado=Pendiente&busqueda=prueba&ordenar_por=nombre&direccion=asc",
+    "/reportes_pendientes",
+    "/reportes_realizados",
+    "/reporte/1",
+    "/estadisticas",
+    "/usuarios_admin",
+    "/crear_usuario_admin",
+    "/editar_usuario_admin/2",
+    "/cambiar_clave"
+  ],
+  "baseline_compared": true,
+  "backend_unchanged": true,
+  "geofence_unchanged": true,
+  "palette_preserved": true,
+  "form_contracts_preserved": true
+}

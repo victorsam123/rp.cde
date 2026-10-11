@@ -17,8 +17,12 @@ from functools import wraps
 from datetime import timedelta
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from io import BytesIO
 from urllib.parse import quote, urlencode
+from urllib.parse import urlparse, parse_qs
+from shapely.geometry import Point, shape
 
 
 app = Flask(__name__)
@@ -26,6 +30,30 @@ app.secret_key = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
 app.permanent_session_lifetime = timedelta(minutes=30)
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(BASE_DIR, "static", "ciudad_del_este_boundary.geojson"), encoding="utf-8-sig") as archivo_limite:
+    LIMITE_CDE_GEOJSON = json.load(archivo_limite)
+LIMITES_CDE = tuple(shape(feature["geometry"]) for feature in LIMITE_CDE_GEOJSON["features"])
+if not LIMITES_CDE or any(limite.is_empty or not limite.is_valid for limite in LIMITES_CDE):
+    raise ValueError("El limite geografico de Ciudad del Este no es valido.")
+
+
+def ubicacion_en_ciudad_del_este(mapa_url):
+    try:
+        enlace = urlparse(mapa_url)
+        if enlace.scheme != "https" or enlace.hostname != "www.google.com" or enlace.path != "/maps":
+            return False
+        coordenadas = parse_qs(enlace.query).get("q", [""])[0].split(",")
+        if len(coordenadas) != 2:
+            return False
+        latitud, longitud = map(float, coordenadas)
+        if not (-90 <= latitud <= 90 and -180 <= longitud <= 180):
+            return False
+        punto = Point(longitud, latitud)
+        return any(limite.covers(punto) for limite in LIMITES_CDE)
+    except (ValueError, TypeError):
+        return False
+
+
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "static", "uploads")
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 
@@ -34,8 +62,52 @@ app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024  # 5 MB
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", "0") == "1"
+app.config["JSON_AS_ASCII"] = False
+app.json.ensure_ascii = False
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+
+def _registrar_fuentes_pdf():
+    fuentes = {
+        "regular": [
+            os.path.join(BASE_DIR, "static", "fonts", "DejaVuSans.ttf"),
+            r"C:\Windows\Fonts\arial.ttf",
+        ],
+        "bold": [
+            os.path.join(BASE_DIR, "static", "fonts", "DejaVuSans-Bold.ttf"),
+            r"C:\Windows\Fonts\arialbd.ttf",
+        ],
+        "italic": [
+            os.path.join(BASE_DIR, "static", "fonts", "DejaVuSans-Oblique.ttf"),
+            r"C:\Windows\Fonts\ariali.ttf",
+        ],
+    }
+    nombres = {
+        "regular": "Helvetica",
+        "bold": "Helvetica-Bold",
+        "italic": "Helvetica-Oblique",
+    }
+
+    for variante, rutas in fuentes.items():
+        for ruta in rutas:
+            if not os.path.exists(ruta):
+                continue
+            nombre = f"ReporteCiudadano-{variante}"
+            try:
+                pdfmetrics.registerFont(TTFont(nombre, ruta))
+                nombres[variante] = nombre
+                break
+            except Exception as exc:
+                print(f"No se pudo registrar la fuente PDF {ruta}: {exc}")
+
+    return nombres
+
+
+PDF_FONTS = _registrar_fuentes_pdf()
+PDF_FONT = PDF_FONTS["regular"]
+PDF_FONT_BOLD = PDF_FONTS["bold"]
+PDF_FONT_ITALIC = PDF_FONTS["italic"]
 
 
 def generar_csrf_token():
@@ -1557,6 +1629,10 @@ def crear_reporte():
     mapa_url = request.form.get("mapa_url", "").strip()
     foto_archivo = request.files.get("foto_problema")
 
+    if mapa_url and not ubicacion_en_ciudad_del_este(mapa_url):
+        flash("La geolocalizaci\u00f3n debe estar dentro del distrito de Ciudad del Este.", "error")
+        return redirect(url_for("ciudadano"))
+
     if not nombre or not telefono or not tipo or not descripcion or not ubicacion:
         flash("Todos los campos del reporte son obligatorios.", "error")
         return redirect(url_for("ciudadano"))
@@ -1634,21 +1710,21 @@ def descargar_comprobante(reporte_id):
 
         pdf.setTitle(f"Comprobante_Reporte_{reporte.get('codigo_reporte', reporte['id'])}")
 
-        pdf.setFont("Helvetica-Bold", 16)
+        pdf.setFont(PDF_FONT_BOLD, 16)
         pdf.drawString(50, y, "COMPROBANTE DE REPORTE CIUDADANO")
         y -= 28
 
-        pdf.setFont("Helvetica", 11)
-        pdf.drawString(50, y, "Sistema Web de Reporte Urbano")
+        pdf.setFont(PDF_FONT, 11)
+        pdf.drawString(50, y, "Plataforma Web de Reporte Ciudadano")
         y -= 18
         pdf.drawString(50, y, "Constancia de recepción del reporte")
         y -= 30
 
-        pdf.setFont("Helvetica-Bold", 12)
+        pdf.setFont(PDF_FONT_BOLD, 12)
         pdf.drawString(50, y, "Datos del reporte")
         y -= 24
 
-        pdf.setFont("Helvetica", 11)
+        pdf.setFont(PDF_FONT, 11)
 
         lineas = [
             f"Código del reporte: {reporte.get('codigo_reporte', reporte['id'])}",
@@ -1675,7 +1751,7 @@ def descargar_comprobante(reporte_id):
             y -= 16
 
         y -= 12
-        pdf.setFont("Helvetica-Oblique", 10)
+        pdf.setFont(PDF_FONT_ITALIC, 10)
         pdf.drawString(50, y, "Este documento sirve como constancia de recepción del reporte ciudadano.")
 
         pdf.showPage()
@@ -1716,7 +1792,7 @@ def _pdf_tabla_reportes(titulo, subtitulo, lista_reportes):
     def nueva_pagina():
         pdf.showPage()
         y_nuevo = alto - 40
-        pdf.setFont("Helvetica-Bold", 8)
+        pdf.setFont(PDF_FONT_BOLD, 8)
         for i, enc in enumerate(ENCABEZADOS[:-1]):
             pdf.drawString(COLS[i], y_nuevo, enc)
         pdf.setLineWidth(0.5)
@@ -1725,13 +1801,13 @@ def _pdf_tabla_reportes(titulo, subtitulo, lista_reportes):
 
     # Encabezado principal
     y = alto - 45
-    pdf.setFont("Helvetica-Bold", 14)
+    pdf.setFont(PDF_FONT_BOLD, 14)
     pdf.drawString(MARGEN_IZQ, y, titulo)
     y -= 20
-    pdf.setFont("Helvetica", 10)
+    pdf.setFont(PDF_FONT, 10)
     pdf.drawString(MARGEN_IZQ, y, subtitulo)
     y -= 14
-    pdf.setFont("Helvetica-Oblique", 9)
+    pdf.setFont(PDF_FONT_ITALIC, 9)
     pdf.drawString(MARGEN_IZQ, y, f"Generado: {datetime.now().strftime('%d/%m/%Y %H:%M')}")
     y -= 18
 
@@ -1739,7 +1815,7 @@ def _pdf_tabla_reportes(titulo, subtitulo, lista_reportes):
     pdf.setLineWidth(0.5)
     pdf.line(MARGEN_IZQ, y, MARGEN_DER, y)
     y -= 12
-    pdf.setFont("Helvetica-Bold", 8)
+    pdf.setFont(PDF_FONT_BOLD, 8)
     for i, enc in enumerate(ENCABEZADOS[:-1]):
         pdf.drawString(COLS[i], y, enc)
     y -= 4
@@ -1747,7 +1823,7 @@ def _pdf_tabla_reportes(titulo, subtitulo, lista_reportes):
     y -= ALTO_FILA
 
     # Filas
-    pdf.setFont("Helvetica", 8)
+    pdf.setFont(PDF_FONT, 8)
     for r in lista_reportes:
         if y < 50:
             y = nueva_pagina()
@@ -1771,7 +1847,7 @@ def _pdf_tabla_reportes(titulo, subtitulo, lista_reportes):
 
     # Pie
     y -= 10
-    pdf.setFont("Helvetica-Oblique", 8)
+    pdf.setFont(PDF_FONT_ITALIC, 8)
     pdf.drawString(MARGEN_IZQ, max(y, 30), f"Total de registros: {len(lista_reportes)}")
 
     pdf.showPage()
@@ -1786,7 +1862,7 @@ def exportar_pdf_todos():
     lista = obtener_todos_los_reportes()
     buffer = _pdf_tabla_reportes(
         "Reporte General — Todos los reportes",
-        "Sistema Web de Reporte Urbano — Municipalidad de Presidente Franco",
+        "Plataforma Web de Reporte Ciudadano — Municipalidad de Ciudad del Este",
         lista
     )
     response = make_response(buffer.read())
@@ -1840,7 +1916,7 @@ def exportar_pdf_estadisticas():
     y = alto - 50
     MARGEN = 50
 
-    def linea(texto, fuente="Helvetica", tam=11, extra=0):
+    def linea(texto, fuente=PDF_FONT, tam=11, extra=0):
         nonlocal y
         pdf.setFont(fuente, tam)
         pdf.drawString(MARGEN, y, texto)
@@ -1852,33 +1928,33 @@ def exportar_pdf_estadisticas():
         pdf.line(MARGEN, y + 10, ancho - MARGEN, y + 10)
         y -= 6
 
-    linea("INFORME DE ESTADÍSTICAS — REPORTE URBANO", "Helvetica-Bold", 14)
-    linea("Municipalidad de Presidente Franco", "Helvetica", 10)
-    linea(f"Generado: {datetime.now().strftime('%d/%m/%Y %H:%M')}", "Helvetica-Oblique", 9)
+    linea("INFORME DE ESTADÍSTICAS — REPORTE URBANO", PDF_FONT_BOLD, 14)
+    linea("Municipalidad de Ciudad del Este", PDF_FONT, 10)
+    linea(f"Generado: {datetime.now().strftime('%d/%m/%Y %H:%M')}", PDF_FONT_ITALIC, 9)
     separador()
 
-    linea("RESUMEN GENERAL", "Helvetica-Bold", 12, extra=4)
+    linea("RESUMEN GENERAL", PDF_FONT_BOLD, 12, extra=4)
     linea(f"Total de reportes registrados:   {est.get('total_reportes', 0)}")
     linea(f"Reportes activos (en gestión):   {est.get('activos', 0)}")
     linea(f"Realizados:                      {est.get('realizados', 0)}")
     linea(f"Rechazados / No corresponde:     {est.get('rechazado', 0)}")
     separador()
 
-    linea("DESGLOSE POR ESTADO", "Helvetica-Bold", 12, extra=4)
+    linea("DESGLOSE POR ESTADO", PDF_FONT_BOLD, 12, extra=4)
     linea(f"Pendiente:    {est.get('pendientes', 0)}")
     linea(f"En revisión:  {est.get('en_revision', 0)}")
     linea(f"Asignado:     {est.get('asignado', 0)}")
     linea(f"En proceso:   {est.get('en_proceso', 0)}")
     separador()
 
-    linea("DESGLOSE POR PRIORIDAD", "Helvetica-Bold", 12, extra=4)
+    linea("DESGLOSE POR PRIORIDAD", PDF_FONT_BOLD, 12, extra=4)
     linea(f"Crítica: {est.get('critica', 0)}")
     linea(f"Alta:    {est.get('alta', 0)}")
     linea(f"Media:   {est.get('media', 0)}")
     linea(f"Baja:    {est.get('baja', 0)}")
     separador()
 
-    linea("INDICADORES EJECUTIVOS", "Helvetica-Bold", 12, extra=4)
+    linea("INDICADORES EJECUTIVOS", PDF_FONT_BOLD, 12, extra=4)
     linea(f"Tasa de resolución:              {kpis.get('pct_resolucion', 0)}%")
     linea(f"Críticos activos sin resolver:   {kpis.get('criticos_activos', 0)}")
     linea(f"Reportes con ubicación en mapa:  {kpis.get('con_ubicacion', 0)}")
@@ -2072,13 +2148,13 @@ def exportar_pdf_detalle_reporte(reporte_id):
         codigo = reporte.get("codigo_reporte") or str(reporte["id"])
 
         # Encabezado
-        pdf.setFont("Helvetica-Bold", 16)
+        pdf.setFont(PDF_FONT_BOLD, 16)
         pdf.drawString(MARGEN, y, "DETALLE DEL REPORTE")
         y -= 22
-        pdf.setFont("Helvetica", 10)
-        pdf.drawString(MARGEN, y, "Sistema Web de Reporte Urbano — Municipalidad de Presidente Franco")
+        pdf.setFont(PDF_FONT, 10)
+        pdf.drawString(MARGEN, y, "Plataforma Web de Reporte Ciudadano — Municipalidad de Ciudad del Este")
         y -= 14
-        pdf.setFont("Helvetica-Oblique", 9)
+        pdf.setFont(PDF_FONT_ITALIC, 9)
         pdf.drawString(MARGEN, y, f"Generado: {datetime.now().strftime('%d/%m/%Y %H:%M')}")
         y -= 6
         pdf.setLineWidth(1)
@@ -2091,9 +2167,9 @@ def exportar_pdf_detalle_reporte(reporte_id):
             if y < 60:
                 pdf.showPage()
                 y = alto - 50
-            pdf.setFont("Helvetica-Bold", 10)
+            pdf.setFont(PDF_FONT_BOLD, 10)
             pdf.drawString(MARGEN, y, f"{etiqueta}:")
-            pdf.setFont("Helvetica", 10)
+            pdf.setFont(PDF_FONT, 10)
             pdf.drawString(MARGEN + 160, y, str(valor or "—"))
             y -= 18
 
@@ -2114,10 +2190,10 @@ def exportar_pdf_detalle_reporte(reporte_id):
 
         # Descripción (puede ser larga)
         y -= 4
-        pdf.setFont("Helvetica-Bold", 10)
+        pdf.setFont(PDF_FONT_BOLD, 10)
         pdf.drawString(MARGEN, y, "Descripción:")
         y -= 16
-        pdf.setFont("Helvetica", 10)
+        pdf.setFont(PDF_FONT, 10)
         descripcion = str(reporte.get("descripcion") or "")
         max_chars = 90
         for i in range(0, max(len(descripcion), 1), max_chars):
@@ -2130,10 +2206,10 @@ def exportar_pdf_detalle_reporte(reporte_id):
         # Observación admin
         if reporte.get("observacion_admin"):
             y -= 6
-            pdf.setFont("Helvetica-Bold", 10)
+            pdf.setFont(PDF_FONT_BOLD, 10)
             pdf.drawString(MARGEN, y, "Observación administrativa:")
             y -= 16
-            pdf.setFont("Helvetica", 10)
+            pdf.setFont(PDF_FONT, 10)
             obs = str(reporte["observacion_admin"])
             for i in range(0, len(obs), max_chars):
                 if y < 60:
@@ -2147,8 +2223,8 @@ def exportar_pdf_detalle_reporte(reporte_id):
         pdf.setLineWidth(0.5)
         pdf.line(MARGEN, max(y, 40), ancho - MARGEN, max(y, 40))
         y -= 14
-        pdf.setFont("Helvetica-Oblique", 8)
-        pdf.drawString(MARGEN, max(y, 28), "Documento generado automáticamente por el Sistema de Reporte Urbano.")
+        pdf.setFont(PDF_FONT_ITALIC, 8)
+        pdf.drawString(MARGEN, max(y, 28), "Documento generado automáticamente por la Plataforma Web de Reporte Ciudadano.")
 
         pdf.showPage()
         pdf.save()
@@ -2178,12 +2254,12 @@ def detalle_reporte(reporte_id):
         return redirect(url_for("reportes"))
 
     mensaje_recibido = (
-        f"Hola {reporte['nombre']}, le escribimos del Sistema de Reporte Urbano. "
+        f"Hola {reporte['nombre']}, le escribimos desde la Plataforma Web de Reporte Ciudadano. "
         f"Su reporte {reporte.get('codigo_reporte', reporte['id'])} fue recibido correctamente."
     )
 
     mensaje_camino = (
-        f"Hola {reporte['nombre']}, le escribimos del Sistema de Reporte Urbano. "
+        f"Hola {reporte['nombre']}, le escribimos desde la Plataforma Web de Reporte Ciudadano. "
         f"Estamos cerca de su domicilio para dar atención al reporte "
         f"{reporte.get('codigo_reporte', reporte['id'])}."
     )
@@ -2313,10 +2389,7 @@ def estadisticas():
 def api_geojson():
     """Ruta explícita para servir el GeoJSON con headers correctos"""
     try:
-        geojson_path = os.path.join(BASE_DIR, "static", "presidente_franco_boundary.geojson")
-        with open(geojson_path, "r", encoding="utf-8-sig") as f:
-            data = json.load(f)
-        return jsonify(data)
+        return jsonify(LIMITE_CDE_GEOJSON)
     except Exception as e:
         print(f"Error al servir GeoJSON: {e}")
         return {"error": str(e)}, 500

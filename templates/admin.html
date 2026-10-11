@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% from '_cde_icons.html' import icon %}
 
-{% block title %}Panel Administrativo | Sistema de Reporte Urbano{% endblock %}
+{% block title %}Panel Administrativo | Plataforma Web de Reporte Ciudadano{% endblock %}
 {% block page_title %}Panel Administrativo{% endblock %}
 {% block page_subtitle %}Resumen general del sistema y acceso rápido a la gestión de incidencias{% endblock %}
 
@@ -17,7 +18,7 @@
         background: white;
         border-radius: 20px;
         padding: 22px;
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        box-shadow: 0 10px 30px rgba(38, 50, 56, 0.08);
         position: relative;
         overflow: hidden;
     }
@@ -31,7 +32,7 @@
         height: 5px;
     }
 
-    .stat-card.total::before { background: linear-gradient(90deg, #1d4ed8, #38bdf8); }
+    .stat-card.total::before { background: linear-gradient(90deg, #E86A17, #F59E42); }
     .stat-card.pending::before { background: linear-gradient(90deg, #d97706, #fbbf24); }
     .stat-card.done::before { background: linear-gradient(90deg, #16a34a, #4ade80); }
     .stat-card.users::before { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
@@ -48,7 +49,7 @@
         background: white;
         border-radius: 18px;
         padding: 20px 22px;
-        box-shadow: 0 6px 22px rgba(15, 23, 42, 0.07);
+        box-shadow: 0 6px 22px rgba(38, 50, 56, 0.07);
         display: flex;
         align-items: center;
         gap: 16px;
@@ -75,7 +76,7 @@
     .kpi-exec-value {
         font-size: 26px;
         font-weight: 700;
-        color: #0f172a;
+        color: #263238;
         line-height: 1.1;
     }
 
@@ -98,7 +99,7 @@
     .stat-number {
         font-size: 34px;
         font-weight: 700;
-        color: #0f172a;
+        color: #263238;
         line-height: 1;
     }
 
@@ -117,7 +118,7 @@
     .section-title {
         font-size: 20px;
         font-weight: 700;
-        color: #0f172a;
+        color: #263238;
         margin-bottom: 8px;
     }
 
@@ -146,8 +147,8 @@
 
     .action-card:hover {
         transform: translateY(-3px);
-        box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
-        border-color: #93c5fd;
+        box-shadow: 0 10px 20px rgba(38, 50, 56, 0.08);
+        border-color: #FDBA74;
     }
 
     .action-icon {
@@ -158,7 +159,7 @@
     .action-title {
         font-size: 15px;
         font-weight: 700;
-        color: #0f172a;
+        color: #263238;
         margin-bottom: 6px;
     }
 
@@ -189,7 +190,7 @@
 
     .dashboard-table th {
         background: #f8fafc;
-        color: #334155;
+        color: #263238;
         font-weight: 700;
     }
 
@@ -242,13 +243,13 @@
     }
 
     .badge-media {
-        background: #dbeafe;
-        color: #1e40af;
+        background: #FFF0E5;
+        color: #B94D0B;
     }
 
     .badge-baja {
         background: #e2e8f0;
-        color: #334155;
+        color: #263238;
     }
 
     .empty-box {
@@ -265,7 +266,7 @@
     .btn-link {
         display: inline-block;
         text-decoration: none;
-        background: linear-gradient(135deg, #1d4ed8, #38bdf8);
+        background: linear-gradient(135deg, #E86A17, #F59E42);
         color: white;
         padding: 10px 14px;
         border-radius: 12px;
@@ -314,7 +315,7 @@
 {% set kpis = kpis if kpis is defined else {} %}
 <div class="kpi-exec-grid">
     <div class="kpi-exec-card resolucion">
-        <div class="kpi-exec-icon">📈</div>
+        <div class="kpi-exec-icon">{{ icon('trending-up') }}</div>
         <div class="kpi-exec-body">
             <div class="kpi-exec-value">{{ kpis.pct_resolucion if kpis.pct_resolucion is defined else 0 }}%</div>
             <div class="kpi-exec-label">Tasa de resolución</div>
@@ -322,7 +323,7 @@
     </div>
 
     <div class="kpi-exec-card criticos">
-        <div class="kpi-exec-icon">🔥</div>
+        <div class="kpi-exec-icon">{{ icon('flame') }}</div>
         <div class="kpi-exec-body">
             <div class="kpi-exec-value">{{ kpis.criticos_activos if kpis.criticos_activos is defined else 0 }}</div>
             <div class="kpi-exec-label">Críticos activos sin resolver</div>
@@ -330,7 +331,7 @@
     </div>
 
     <div class="kpi-exec-card ubicacion">
-        <div class="kpi-exec-icon">📍</div>
+        <div class="kpi-exec-icon">{{ icon('map-pin') }}</div>
         <div class="kpi-exec-body">
             <div class="kpi-exec-value">{{ kpis.con_ubicacion if kpis.con_ubicacion is defined else 0 }}</div>
             <div class="kpi-exec-label">Reportes con ubicación en mapa</div>
@@ -338,7 +339,7 @@
     </div>
 
     <div class="kpi-exec-card foto">
-        <div class="kpi-exec-icon">📷</div>
+        <div class="kpi-exec-icon">{{ icon('camera') }}</div>
         <div class="kpi-exec-body">
             <div class="kpi-exec-value">{{ kpis.con_foto if kpis.con_foto is defined else 0 }}</div>
             <div class="kpi-exec-label">Reportes con foto del problema</div>
@@ -354,7 +355,7 @@
     </div>
 
     <div class="stat-card pending">
-        <div class="stat-label">En gesti\u00f3n</div>
+        <div class="stat-label">En gestión</div>
         <div class="stat-number">{{ total_pendientes if total_pendientes is defined else 0 }}</div>
         <div class="stat-extra">Reportes activos en el sistema</div>
     </div>
@@ -413,7 +414,7 @@
                                 {% if reporte.estado == 'Pendiente' %}
                                     <span class="badge badge-pendiente">Pendiente</span>
                                 {% elif reporte.estado == 'En revisi\u00f3n' %}
-                                    <span class="badge badge-revision">En revisi\u00f3n</span>
+                                    <span class="badge badge-revision">En revisión</span>
                                 {% elif reporte.estado == 'Asignado' %}
                                     <span class="badge badge-asignado">Asignado</span>
                                 {% elif reporte.estado == 'En proceso' %}
@@ -446,25 +447,25 @@
 
         <div class="quick-actions">
             <a href="{{ url_for('reportes_pendientes') }}" class="action-card">
-                <div class="action-icon">📌</div>
+                <div class="action-icon">{{ icon('pin') }}</div>
                 <div class="action-title">Pendientes</div>
                 <div class="action-text">Consulta los reportes que todavía no fueron resueltos.</div>
             </a>
 
             <a href="{{ url_for('reportes_realizados') }}" class="action-card">
-                <div class="action-icon">✅</div>
+                <div class="action-icon">{{ icon('circle-check') }}</div>
                 <div class="action-title">Realizados</div>
                 <div class="action-text">Revisa las incidencias ya finalizadas y cerradas.</div>
             </a>
 
             <a href="{{ url_for('estadisticas') }}" class="action-card">
-    <div class="action-icon">📊</div>
+    <div class="action-icon">{{ icon('chart-no-axes-combined') }}</div>
     <div class="action-title">Estadísticas</div>
     <div class="action-text">Analiza el comportamiento general del sistema.</div>
 </a>
 
             <a href="{{ url_for('usuarios_admin') }}" class="action-card">
-                <div class="action-icon">👤</div>
+                <div class="action-icon">{{ icon('user-round') }}</div>
                 <div class="action-title">Usuarios</div>
                 <div class="action-text">Administra accesos y cuentas del panel administrativo.</div>
             </a>
@@ -481,24 +482,24 @@
     <div class="section-subtitle">
         Descarga un informe en formato PDF directamente desde el panel.
     </div>
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 18px;">
-        <a href="{{ url_for('exportar_pdf_todos') }}" class="action-card" style="border-left: 4px solid #1d4ed8;">
-            <div class="action-icon">📄</div>
+    <div class="cde-export-grid">
+        <a href="{{ url_for('exportar_pdf_todos') }}" class="action-card" style="border-left: 4px solid #E86A17;">
+            <div class="action-icon">{{ icon('file-text') }}</div>
             <div class="action-title">Todos los reportes</div>
             <div class="action-text">Exporta el listado completo de todas las incidencias registradas.</div>
         </a>
         <a href="{{ url_for('exportar_pdf_pendientes') }}" class="action-card" style="border-left: 4px solid #d97706;">
-            <div class="action-icon">📋</div>
+            <div class="action-icon">{{ icon('clipboard-list') }}</div>
             <div class="action-title">Pendientes</div>
             <div class="action-text">Solo los reportes activos que aún no han sido finalizados.</div>
         </a>
         <a href="{{ url_for('exportar_pdf_realizados') }}" class="action-card" style="border-left: 4px solid #16a34a;">
-            <div class="action-icon">✅</div>
+            <div class="action-icon">{{ icon('circle-check') }}</div>
             <div class="action-title">Realizados</div>
             <div class="action-text">Casos finalizados: realizados y rechazados / no corresponde.</div>
         </a>
         <a href="{{ url_for('exportar_pdf_estadisticas') }}" class="action-card" style="border-left: 4px solid #7c3aed;">
-            <div class="action-icon">📊</div>
+            <div class="action-icon">{{ icon('chart-no-axes-combined') }}</div>
             <div class="action-title">Estadísticas</div>
             <div class="action-text">Informe ejecutivo con resumen, estados, prioridades e indicadores.</div>
         </a>

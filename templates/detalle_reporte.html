@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from '_cde_icons.html' import icon %}
 
 {% block title %}Detalle del Reporte{% endblock %}
 {% block page_title %}Detalle del Reporte{% endblock %}
@@ -14,7 +15,7 @@
     .detail-card {
         background: white;
         border-radius: 22px;
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        box-shadow: 0 10px 30px rgba(38, 50, 56, 0.08);
         padding: 28px;
     }
 
@@ -45,7 +46,7 @@
 
     .detail-value {
         font-size: 15px;
-        color: #0f172a;
+        color: #263238;
         line-height: 1.8;
     }
 
@@ -76,7 +77,7 @@
     }
 
     .btn-save-estado {
-        background: linear-gradient(135deg, #1d4ed8, #38bdf8);
+        background: linear-gradient(135deg, #E86A17, #F59E42);
         color: white;
     }
 
@@ -93,8 +94,8 @@
     }
 
     .select-estado:focus {
-        border-color: #1d4ed8;
-        box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.10);
+        border-color: #E86A17;
+        box-shadow: 0 0 0 4px rgba(232, 106, 23, 0.10);
     }
 
     .status-box {
@@ -147,7 +148,7 @@
     .observacion-card h3,
     .foto-card h3 {
         font-size: 18px;
-        color: #0f172a;
+        color: #263238;
         margin-bottom: 8px;
     }
 
@@ -177,14 +178,14 @@
 
     .textarea-control:focus,
     .file-control:focus {
-        border-color: #1d4ed8;
-        box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.10);
+        border-color: #E86A17;
+        box-shadow: 0 0 0 4px rgba(232, 106, 23, 0.10);
     }
 
     .btn-save {
         margin-top: 14px;
         border: none;
-        background: linear-gradient(135deg, #1d4ed8, #38bdf8);
+        background: linear-gradient(135deg, #E86A17, #F59E42);
         color: white;
         padding: 12px 18px;
         border-radius: 12px;
@@ -209,7 +210,7 @@
 
     .imagen-box h4 {
         font-size: 15px;
-        color: #0f172a;
+        color: #263238;
         margin-bottom: 12px;
     }
 
@@ -268,7 +269,7 @@
 
 .whatsapp-card h3 {
     font-size: 18px;
-    color: #0f172a;
+    color: #263238;
     margin-bottom: 8px;
 }
 
@@ -346,12 +347,12 @@
 
     /* Encabezado de impresión */
     .detail-card::before {
-        content: "Detalle del Reporte — Sistema de Reporte Urbano";
+        content: "Detalle del Reporte — Plataforma Web de Reporte Ciudadano";
         display: block;
         font-size: 18px;
         font-weight: 700;
         margin-bottom: 18px;
-        border-bottom: 2px solid #0f172a;
+        border-bottom: 2px solid #263238;
         padding-bottom: 10px;
     }
 }
@@ -361,6 +362,7 @@
 {% block content %}
 <div class="detail-card">
     <div class="detail-grid">
+        <h3 class="cde-detail-heading">Identificación del reporte</h3>
         <div class="detail-item">
             <div class="detail-label">ID</div>
             <div class="detail-value" style="font-weight:700; color:#16a34a;">
@@ -373,6 +375,7 @@
             <div class="detail-value">{{ reporte.estado }}</div>
         </div>
 
+        <h3 class="cde-detail-heading">Datos del ciudadano</h3>
         <div class="detail-item">
             <div class="detail-label">Nombre</div>
             <div class="detail-value">{{ reporte.nombre }}</div>
@@ -388,6 +391,7 @@
             <div class="detail-value">{{ reporte.correo }}</div>
         </div>
 
+        <h3 class="cde-detail-heading">Incidencia y ubicación</h3>
         <div class="detail-item">
             <div class="detail-label">Tipo</div>
             <div class="detail-value">{{ reporte.tipo }}</div>
@@ -413,7 +417,7 @@
     <div class="detail-label">Ubicación en mapa</div>
     <div class="detail-value">
         <a href="{{ reporte.mapa_url }}" target="_blank" class="btn-mapa">
-            📍 Ver ubicación en Google Maps
+            {{ icon('map-pin') }} Ver ubicación en Google Maps
         </a>
     </div>
 </div>
@@ -480,10 +484,10 @@
     <div class="action-box">
         <form method="POST" action="{{ url_for('cambiar_estado', reporte_id=reporte.id) }}" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <label for="estado" style="font-size:14px; font-weight:600; color:#334155;">Cambiar estado:</label>
+            <label for="estado" style="font-size:14px; font-weight:600; color:#263238;">Cambiar estado:</label>
             <select id="estado" name="estado" class="select-estado">
                 <option value="Pendiente" {% if reporte.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
-                <option value="En revisi\u00f3n" {% if reporte.estado == 'En revisi\u00f3n' %}selected{% endif %}>En revisi\u00f3n</option>
+                <option value="En revisi\u00f3n" {% if reporte.estado == 'En revisi\u00f3n' %}selected{% endif %}>En revisión</option>
                 <option value="Asignado" {% if reporte.estado == 'Asignado' %}selected{% endif %}>Asignado</option>
                 <option value="En proceso" {% if reporte.estado == 'En proceso' %}selected{% endif %}>En proceso</option>
                 <option value="Realizado" {% if reporte.estado == 'Realizado' %}selected{% endif %}>Realizado</option>
@@ -533,19 +537,19 @@
     <div class="whatsapp-actions">
         {% if whatsapp_recibido %}
             <a href="{{ whatsapp_recibido }}" target="_blank" class="btn-whatsapp">
-                💬 Confirmar recepción
+                {{ icon('message-circle') }} Confirmar recepción
             </a>
         {% endif %}
 
         {% if whatsapp_camino %}
             <a href="{{ whatsapp_camino }}" target="_blank" class="btn-whatsapp">
-                🚗 Avisar que están cerca
+                {{ icon('car') }} Avisar que están cerca
             </a>
         {% endif %}
 
         {% if whatsapp_resuelto %}
             <a href="{{ whatsapp_resuelto }}" target="_blank" class="btn-whatsapp">
-                ✅ Informar resolución
+                {{ icon('circle-check') }} Informar resolución
             </a>
         {% endif %}
     </div>

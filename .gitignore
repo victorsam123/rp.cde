@@ -5,4 +5,8 @@ __pycache__/
 *.pyd
 venv/
 .venv/
+.runtime/
+.qa/
+server*.log
+*.zip
 static/uploads/

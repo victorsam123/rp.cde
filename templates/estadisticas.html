@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from '_cde_icons.html' import icon %}
 
 {% block title %}Estadísticas{% endblock %}
 {% block page_title %}Estadísticas del Sistema{% endblock %}
@@ -17,7 +18,7 @@
         background: white;
         border-radius: 22px;
         padding: 24px;
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        box-shadow: 0 10px 30px rgba(38, 50, 56, 0.08);
         position: relative;
         overflow: hidden;
         border: 1px solid #e2e8f0;
@@ -32,7 +33,7 @@
         height: 5px;
     }
 
-    .card-total::before { background: linear-gradient(90deg, #1d4ed8, #38bdf8); }
+    .card-total::before { background: linear-gradient(90deg, #E86A17, #F59E42); }
     .card-pendientes::before { background: linear-gradient(90deg, #d97706, #fbbf24); }
     .card-realizados::before { background: linear-gradient(90deg, #16a34a, #4ade80); }
     .card-critica::before { background: linear-gradient(90deg, #b91c1c, #ef4444); }
@@ -72,7 +73,7 @@
     .stat-number {
         font-size: 38px;
         font-weight: 700;
-        color: #0f172a;
+        color: #263238;
         line-height: 1;
         margin-bottom: 10px;
     }
@@ -92,14 +93,14 @@
     .card-box {
         background: white;
         border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        box-shadow: 0 10px 30px rgba(38, 50, 56, 0.08);
         padding: 24px;
     }
 
     .card-box h3 {
         font-size: 20px;
         margin-bottom: 8px;
-        color: #0f172a;
+        color: #263238;
     }
 
     .card-box p {
@@ -125,7 +126,7 @@
     .mini-bar-label {
         font-size: 14px;
         font-weight: 600;
-        color: #334155;
+        color: #263238;
     }
 
     .mini-bar-track {
@@ -139,14 +140,14 @@
     .mini-bar-fill {
         height: 100%;
         border-radius: 999px;
-        background: linear-gradient(90deg, #1d4ed8, #38bdf8);
+        background: linear-gradient(90deg, #E86A17, #F59E42);
     }
 
     .mini-bar-value {
         text-align: right;
         font-size: 13px;
         font-weight: 700;
-        color: #0f172a;
+        color: #263238;
     }
 
     .list-table {
@@ -165,7 +166,7 @@
     .list-table th {
         background: #f8fafc;
         font-weight: 700;
-        color: #334155;
+        color: #263238;
     }
 
     .empty-box {
@@ -181,14 +182,14 @@
     margin-top: 24px;
     background: white;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 10px 30px rgba(38, 50, 56, 0.08);
     padding: 24px;
 }
 
 .chart-card h3 {
     font-size: 20px;
     margin-bottom: 8px;
-    color: #0f172a;
+    color: #263238;
 }
 
 .chart-card p {
@@ -221,7 +222,7 @@
 .bar-value {
     font-size: 13px;
     font-weight: 700;
-    color: #0f172a;
+    color: #263238;
 }
 
 .bar-column-wrap {
@@ -235,8 +236,8 @@
 .bar-column {
     width: 58px;
     border-radius: 16px 16px 0 0;
-    background: linear-gradient(180deg, #38bdf8, #1d4ed8);
-    box-shadow: 0 10px 20px rgba(29, 78, 216, 0.20);
+    background: linear-gradient(180deg, #F59E42, #E86A17);
+    box-shadow: 0 10px 20px rgba(232, 106, 23, 0.20);
     transition: transform .2s ease, opacity .2s ease;
 }
 
@@ -257,14 +258,14 @@
     margin-top: 24px;
     background: white;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 10px 30px rgba(38, 50, 56, 0.08);
     padding: 24px;
 }
 
 .estado-chart-card h3 {
     font-size: 20px;
     margin-bottom: 8px;
-    color: #0f172a;
+    color: #263238;
 }
 
 .estado-chart-card p {
@@ -316,7 +317,7 @@
 .donut-center .total {
     font-size: 30px;
     font-weight: 700;
-    color: #0f172a;
+    color: #263238;
     line-height: 1;
 }
 
@@ -366,7 +367,7 @@
 .legend-title {
     font-size: 14px;
     font-weight: 700;
-    color: #0f172a;
+    color: #263238;
     margin-bottom: 4px;
 }
 
@@ -379,7 +380,7 @@
 .legend-number {
     font-size: 18px;
     font-weight: 700;
-    color: #0f172a;
+    color: #263238;
 }
 
 @media (max-width: 900px) {
@@ -433,14 +434,14 @@
     margin-top: 24px;
     background: white;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 10px 30px rgba(38, 50, 56, 0.08);
     padding: 24px;
 }
 
 .exec-panel h3 {
     font-size: 20px;
     margin-bottom: 8px;
-    color: #0f172a;
+    color: #263238;
 }
 
 .exec-panel p {
@@ -453,14 +454,14 @@
     margin-top: 24px;
     background: white;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 10px 30px rgba(38, 50, 56, 0.08);
     padding: 24px;
 }
 
 .findings-panel h3 {
     font-size: 20px;
     margin-bottom: 8px;
-    color: #0f172a;
+    color: #263238;
 }
 
 .findings-panel p {
@@ -496,7 +497,7 @@
 .finding-value {
     font-size: 18px;
     font-weight: 700;
-    color: #0f172a;
+    color: #263238;
     line-height: 1.5;
     margin-bottom: 6px;
 }
@@ -509,7 +510,7 @@
 
 .interpretation-box {
     background: linear-gradient(135deg, #eff6ff, #f8fafc);
-    border: 1px solid #bfdbfe;
+    border: 1px solid #FDBA74;
     border-radius: 18px;
     padding: 18px;
 }
@@ -517,13 +518,13 @@
 .interpretation-title {
     font-size: 14px;
     font-weight: 700;
-    color: #1e3a8a;
+    color: #B94D0B;
     margin-bottom: 8px;
 }
 
 .interpretation-text {
     font-size: 14px;
-    color: #1e40af;
+    color: #B94D0B;
     line-height: 1.8;
 }
 
@@ -549,14 +550,14 @@
 .exec-box .exec-title {
     font-size: 13px;
     font-weight: 700;
-    color: #334155;
+    color: #263238;
     margin-bottom: 8px;
 }
 
 .exec-box .exec-number {
     font-size: 26px;
     font-weight: 700;
-    color: #0f172a;
+    color: #263238;
     line-height: 1;
     margin-bottom: 8px;
 }
@@ -636,7 +637,7 @@
     <div class="stat-card card-total">
         <div class="stat-top">
             <div class="stat-label">Total de reportes</div>
-            <div class="stat-icon">📋</div>
+            <div class="stat-icon">{{ icon('clipboard-list') }}</div>
         </div>
         <div class="stat-number">{{ resumen.total_reportes }}</div>
         <div class="stat-description">
@@ -646,21 +647,21 @@
 
     <div class="stat-card card-pendientes">
         <div class="stat-top">
-            <div class="stat-label">En gesti\u00f3n</div>
-            <div class="stat-icon">⏳</div>
+            <div class="stat-label">En gestión</div>
+            <div class="stat-icon">{{ icon('clock-3') }}</div>
         </div>
         <div class="stat-number">{{ resumen.activos }}</div>
-        <div class="stat-description">Reportes activos (Pendiente, En revisi\u00f3n, Asignado, En proceso) que requieren atenci\u00f3n.</div>
+        <div class="stat-description">Reportes activos (Pendiente, En revisión, Asignado, En proceso) que requieren atención.</div>
         <div class="kpi-extra">{{ pct_activos }}% del total general</div>
     </div>
 
     <div class="stat-card card-realizados">
         <div class="stat-top">
             <div class="stat-label">Realizados</div>
-            <div class="stat-icon">✅</div>
+            <div class="stat-icon">{{ icon('circle-check') }}</div>
         </div>
         <div class="stat-number">{{ resumen.realizados }}</div>
-        <div class="stat-description">Incidencias ya finalizadas con resoluci\u00f3n completada en el sistema.</div>
+        <div class="stat-description">Incidencias ya finalizadas con resolución completada en el sistema.</div>
         <div class="kpi-extra">{{ pct_realizados }}% del total general</div>
     </div>
 
@@ -677,7 +678,7 @@
     <div class="stat-card card-critica">
         <div class="stat-top">
             <div class="stat-label">Prioridad crítica</div>
-            <div class="stat-icon">🔥</div>
+            <div class="stat-icon">{{ icon('flame') }}</div>
         </div>
         <div class="stat-number">{{ resumen.critica }}</div>
         <div class="stat-description">Incidencias de riesgo inmediato que requieren respuesta urgente.</div>
@@ -717,7 +718,7 @@
     <div class="stat-card card-ubicacion">
         <div class="stat-top">
             <div class="stat-label">Con enlace de ubicación</div>
-            <div class="stat-icon">📍</div>
+            <div class="stat-icon">{{ icon('map-pin') }}</div>
         </div>
         <div class="stat-number">{{ resumen.con_ubicacion }}</div>
         <div class="stat-description">Reportes que incluyen un enlace de mapa o referencia de ubicación del incidente.</div>
@@ -727,7 +728,7 @@
     <div class="stat-card card-foto">
         <div class="stat-top">
             <div class="stat-label">Con foto adjunta</div>
-            <div class="stat-icon">📷</div>
+            <div class="stat-icon">{{ icon('camera') }}</div>
         </div>
         <div class="stat-number">{{ resumen.con_foto }}</div>
         <div class="stat-description">Reportes que cuentan con evidencia fotográfica del problema reportado.</div>

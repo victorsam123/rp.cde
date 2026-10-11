@@ -9,7 +9,7 @@
     .table-card {
         background: #ffffff;
         border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        box-shadow: 0 10px 30px rgba(38, 50, 56, 0.08);
         border: 1px solid #e2e8f0;
         overflow: hidden;
     }
@@ -22,7 +22,7 @@
 
     .table-header h3 {
         font-size: 21px;
-        color: #0f172a;
+        color: #263238;
         margin-bottom: 6px;
     }
 
@@ -64,7 +64,7 @@
         border: 1.5px solid #dbe3ef;
         border-radius: 10px;
         font-size: 13px;
-        color: #0f172a;
+        color: #263238;
         background: #ffffff;
         outline: none;
         transition: border-color 0.2s, box-shadow 0.2s;
@@ -84,7 +84,7 @@
     }
 
     .btn-filtrar {
-        background: linear-gradient(135deg, #1d4ed8, #38bdf8);
+        background: linear-gradient(135deg, #E86A17, #F59E42);
         color: #ffffff;
         border: none;
         padding: 9px 18px;
@@ -114,11 +114,11 @@
 
     .btn-limpiar:hover {
         border-color: #94a3b8;
-        color: #0f172a;
+        color: #263238;
     }
 
     .btn-exportar {
-        color: #0f172a;
+        color: #263238;
         font-size: 13px;
         text-decoration: none;
         padding: 9px 14px;
@@ -145,7 +145,7 @@
     }
 
     .resultado-info strong {
-        color: #0f172a;
+        color: #263238;
     }
 
     .table-wrapper {
@@ -170,7 +170,7 @@
 
     .report-table th {
         background: #f1f5f9;
-        color: #334155;
+        color: #263238;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.03em;
@@ -190,7 +190,7 @@
     }
 
     .th-link:hover {
-        color: #0f172a;
+        color: #263238;
     }
 
     .sort-ind {
@@ -205,14 +205,14 @@
 
     .col-id {
         font-weight: 700;
-        color: #0f172a;
+        color: #263238;
         white-space: nowrap;
     }
 
     .col-fecha,
     .col-telefono {
         white-space: nowrap;
-        color: #334155;
+        color: #263238;
     }
 
     .col-nombre,
@@ -274,18 +274,18 @@
     }
 
     .badge-media {
-        background: #dbeafe;
-        color: #1e40af;
+        background: #FFF0E5;
+        color: #B94D0B;
     }
 
     .badge-baja {
         background: #e2e8f0;
-        color: #334155;
+        color: #263238;
     }
 
     .btn-view {
         text-decoration: none;
-        background: linear-gradient(135deg, #1d4ed8, #38bdf8);
+        background: linear-gradient(135deg, #E86A17, #F59E42);
         color: #ffffff;
         padding: 7px 11px;
         border-radius: 10px;
@@ -339,7 +339,7 @@
         border-radius: 9px;
         border: 1px solid #dbe3ef;
         background: #ffffff;
-        color: #334155;
+        color: #263238;
         font-size: 13px;
         font-weight: 700;
         text-decoration: none;
@@ -353,8 +353,8 @@
     }
 
     .page-link.active {
-        background: linear-gradient(135deg, #1d4ed8, #38bdf8);
-        border-color: #1d4ed8;
+        background: linear-gradient(135deg, #E86A17, #F59E42);
+        border-color: #E86A17;
         color: #ffffff;
     }
 
@@ -510,7 +510,7 @@
                         {% if reporte.estado == 'Pendiente' %}
                             <span class="badge badge-pendiente">Pendiente</span>
                         {% elif reporte.estado == 'En revisi\u00f3n' %}
-                            <span class="badge badge-revision">En revisi\u00f3n</span>
+                            <span class="badge badge-revision">En revisión</span>
                         {% elif reporte.estado == 'Asignado' %}
                             <span class="badge badge-asignado">Asignado</span>
                         {% elif reporte.estado == 'En proceso' %}

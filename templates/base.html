@@ -1,10 +1,10 @@
 <!DOCTYPE html>
+{% from '_cde_icons.html' import icon %}
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Sistema de Reporte Urbano{% endblock %}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>{% block title %}Plataforma Web de Reporte Ciudadano{% endblock %}</title>
     <style>
         * {
             margin: 0;
@@ -13,18 +13,18 @@
         }
 
         :root {
-            --color-primario: #0f172a;
-            --color-secundario: #1d4ed8;
-            --color-acento: #38bdf8;
+            --color-primario: #263238;
+            --color-secundario: #E86A17;
+            --color-acento: #F59E42;
             --color-fondo: #f1f5f9;
             --color-blanco: #ffffff;
-            --color-texto: #1e293b;
+            --color-texto: #263238;
             --color-gris: #64748b;
             --color-borde: #cbd5e1;
             --color-exito: #16a34a;
             --color-error: #dc2626;
             --color-alerta: #d97706;
-            --sombra-card: 0 10px 30px rgba(15, 23, 42, 0.08);
+            --sombra-card: 0 10px 30px rgba(38, 50, 56, 0.08);
             --radio: 18px;
             --sidebar-width: 260px;
         }
@@ -43,14 +43,14 @@
 
         .sidebar {
             width: var(--sidebar-width);
-            background: linear-gradient(180deg, #0f172a, #1e3a8a);
+            background: linear-gradient(180deg, #263238, #B94D0B);
             color: white;
             padding: 28px 18px;
             position: fixed;
             top: 0;
             left: 0;
             bottom: 0;
-            box-shadow: 8px 0 30px rgba(15, 23, 42, 0.12);
+            box-shadow: 8px 0 30px rgba(38, 50, 56, 0.12);
             overflow-y: auto;
         }
 
@@ -135,8 +135,8 @@
         }
 
         .menu a.active {
-            background: rgba(56, 189, 248, 0.18);
-            border: 1px solid rgba(56, 189, 248, 0.28);
+            background: rgba(245, 158, 66, 0.18);
+            border: 1px solid rgba(245, 158, 66, 0.28);
         }
 
         .main {
@@ -194,7 +194,7 @@
         .btn-primary {
             background: linear-gradient(135deg, var(--color-secundario), var(--color-acento));
             color: white;
-            box-shadow: 0 12px 24px rgba(29, 78, 216, .18);
+            box-shadow: 0 12px 24px rgba(232, 106, 23, .18);
         }
 
         .btn-primary:hover {
@@ -249,9 +249,9 @@
 
         .flash.info,
         .flash.message {
-            background: #dbeafe;
-            color: #1e40af;
-            border-color: #bfdbfe;
+            background: #FFF0E5;
+            color: #B94D0B;
+            border-color: #FDBA74;
         }
 
         .card {
@@ -336,15 +336,18 @@
     </style>
 
     {% block extra_css %}{% endblock %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cde-institucional.css') }}">
 </head>
-<body>
+<body class="cde-ui cde-admin cde-page-{{ request.endpoint }}">
+    <a class="cde-skip" href="#contenido-principal">Ir al contenido</a>
     <div class="layout">
         {% if session.get('admin_logueado') %}
         <aside class="sidebar" id="sidebar">
             <div class="brand">
-                <small>Panel Administrativo</small>
-                <h1>Reporte Urbano</h1>
-                <p>Gestión profesional de incidencias ciudadanas con control, seguimiento y administración centralizada.</p>
+                <a class="cde-wordmark" href="{{ url_for('admin') }}"><span class="cde-monogram">CDE</span><span>Municipalidad de<br><strong>Ciudad del Este</strong></span></a>
+                <small>GESTIÓN MUNICIPAL</small>
+                <h1>Reporte Ciudadano</h1>
+                <p>Municipalidad de Ciudad del Este</p>
             </div>
 
             <div class="user-box">
@@ -353,25 +356,30 @@
                 <div class="role">{{ session.get('admin_rol', 'admin')|capitalize }}</div>
             </div>
 
-            <nav class="menu">
-    <a href="{{ url_for('admin') }}">🏠 <span>Dashboard</span></a>
-    <a href="{{ url_for('estadisticas') }}">📊 <span>Estadísticas</span></a>
-    <a href="{{ url_for('reportes_pendientes') }}">📌 <span>Pendientes</span></a>
-    <a href="{{ url_for('reportes_realizados') }}">✅ <span>Realizados</span></a>
-    <a href="{{ url_for('reportes') }}">🗂️ <span>Todos los reportes</span></a>
-    <a href="{{ url_for('usuarios_admin') }}">👤 <span>Usuarios</span></a>
-    <a href="{{ url_for('cambiar_clave') }}">🔒 <span>Cambiar contraseña</span></a>
-    <a href="{{ url_for('logout') }}">🚪 <span>Cerrar sesión</span></a>
-</nav>
+            <nav class="menu" aria-label="Navegación administrativa">
+                <a href="{{ url_for('admin') }}" {% if request.endpoint == 'admin' %}class="active" aria-current="page"{% endif %}>{{ icon('layout-dashboard') }} <span>Dashboard</span></a>
+                <a href="{{ url_for('estadisticas') }}" {% if request.endpoint == 'estadisticas' %}class="active" aria-current="page"{% endif %}>{{ icon('chart-no-axes-combined') }} <span>Estadísticas</span></a>
+                <span class="cde-nav-label">INCIDENCIAS</span>
+                <a href="{{ url_for('reportes_pendientes') }}" {% if request.endpoint == 'reportes_pendientes' %}class="active" aria-current="page"{% endif %}>{{ icon('clock-3') }} <span>Pendientes</span></a>
+                <a href="{{ url_for('reportes_realizados') }}" {% if request.endpoint == 'reportes_realizados' %}class="active" aria-current="page"{% endif %}>{{ icon('circle-check') }} <span>Realizados</span></a>
+                <a href="{{ url_for('reportes') }}" {% if request.endpoint in ['reportes', 'detalle_reporte'] %}class="active" aria-current="page"{% endif %}>{{ icon('files') }} <span>Todos los reportes</span></a>
+                <span class="cde-nav-label">ADMINISTRACIÓN</span>
+                <a href="{{ url_for('usuarios_admin') }}" {% if request.endpoint in ['usuarios_admin', 'crear_usuario_admin_route', 'editar_usuario_admin'] %}class="active" aria-current="page"{% endif %}>{{ icon('users-round') }} <span>Usuarios</span></a>
+                <a href="{{ url_for('cambiar_clave') }}" {% if request.endpoint == 'cambiar_clave' %}class="active" aria-current="page"{% endif %}>{{ icon('lock-keyhole') }} <span>Cambiar contraseña</span></a>
+                <a href="{{ url_for('logout') }}">{{ icon('log-out') }} <span>Cerrar sesión</span></a>
+            </nav>
+            <button type="button" class="cde-sidebar-close" onclick="toggleSidebar()" aria-label="Cerrar menú" title="Cerrar menú">{{ icon('x') }}</button>
         </aside>
+        <button type="button" class="cde-sidebar-backdrop" onclick="toggleSidebar()" aria-label="Cerrar menú" tabindex="-1" hidden></button>
         {% endif %}
 
         <div class="main">
             {% if session.get('admin_logueado') %}
             <header class="topbar">
                 <div>
-                    <button class="menu-toggle" onclick="toggleSidebar()">Menú</button>
-                    <h2>{% block page_title %}Sistema de Reporte Urbano{% endblock %}</h2>
+                    <button type="button" class="menu-toggle" onclick="toggleSidebar()" aria-label="Abrir menú" title="Abrir menú" aria-controls="sidebar" aria-expanded="false">{{ icon('menu') }}</button>
+                    <span class="cde-topbar-label">CIUDAD DEL ESTE / GESTIÓN CIUDADANA</span>
+                    <h2>{% block page_title %}Plataforma Web de Reporte Ciudadano{% endblock %}</h2>
                     <p>{% block page_subtitle %}Panel de administración y control del sistema{% endblock %}</p>
                 </div>
 
@@ -383,12 +391,12 @@
             </header>
             {% endif %}
 
-            <main class="content">
+            <main class="content" id="contenido-principal" tabindex="-1">
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
                         <div class="flash-area">
                             {% for category, message in messages %}
-                                <div class="flash {{ category }}">{{ message }}</div>
+                                <div class="flash {{ category }}" role="status">{{ message }}</div>
                             {% endfor %}
                         </div>
                     {% endif %}
@@ -398,7 +406,7 @@
             </main>
 
             <footer class="footer">
-                Sistema Web de Reporte Urbano · Proyecto desarrollado con Flask y PostgreSQL
+                Municipalidad de Ciudad del Este <span>Reporte Ciudadano · Gestión municipal</span>
             </footer>
         </div>
     </div>
@@ -407,9 +415,17 @@
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             if (sidebar) {
-                sidebar.classList.toggle('open');
+                const abierto = sidebar.classList.toggle('open');
+                document.querySelector('.menu-toggle').setAttribute('aria-expanded', String(abierto));
+                document.querySelector('.cde-sidebar-backdrop').hidden = !abierto;
+                document.body.classList.toggle('cde-menu-open', abierto);
+                if (abierto) document.querySelector('.cde-sidebar-close').focus();
+                else document.querySelector('.menu-toggle').focus();
             }
         }
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape' && document.getElementById('sidebar')?.classList.contains('open')) toggleSidebar();
+        });
     </script>
 
     {% block extra_js %}{% endblock %}

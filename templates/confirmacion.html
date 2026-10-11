@@ -1,10 +1,10 @@
 <!DOCTYPE html>
+{% from '_cde_icons.html' import icon %}
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Confirmación de Reporte</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
@@ -13,13 +13,13 @@
         }
 
         :root {
-            --color-primario: #0f172a;
-            --color-secundario: #1d4ed8;
-            --color-acento: #38bdf8;
+            --color-primario: #263238;
+            --color-secundario: #E86A17;
+            --color-acento: #F59E42;
             --color-exito: #16a34a;
             --color-fondo: #f1f5f9;
             --color-blanco: #ffffff;
-            --color-texto: #1e293b;
+            --color-texto: #263238;
             --color-gris: #64748b;
             --color-borde: #cbd5e1;
         }
@@ -40,12 +40,12 @@
             max-width: 880px;
             background: white;
             border-radius: 28px;
-            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
+            box-shadow: 0 20px 50px rgba(38, 50, 56, 0.12);
             overflow: hidden;
         }
 
         .top-banner {
-            background: linear-gradient(135deg, #0f172a, #1d4ed8);
+            background: linear-gradient(135deg, #263238, #E86A17);
             color: white;
             padding: 34px 30px;
             text-align: center;
@@ -120,7 +120,7 @@
 
         .value {
             font-size: 15px;
-            color: #0f172a;
+            color: #263238;
             line-height: 1.8;
             word-break: break-word;
         }
@@ -143,14 +143,14 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #1d4ed8, #38bdf8);
+            background: linear-gradient(135deg, #E86A17, #F59E42);
             color: white;
-            box-shadow: 0 12px 24px rgba(29, 78, 216, 0.22);
+            box-shadow: 0 12px 24px rgba(232, 106, 23, 0.22);
         }
 
         .btn-secondary {
             background: #e2e8f0;
-            color: #0f172a;
+            color: #263238;
         }
 
         .btn:hover {
@@ -160,11 +160,11 @@
         .note-box {
             margin-top: 24px;
             background: #eff6ff;
-            border: 1px solid #bfdbfe;
+            border: 1px solid #FDBA74;
             border-radius: 18px;
             padding: 18px;
             font-size: 14px;
-            color: #1e3a8a;
+            color: #B94D0B;
             line-height: 1.8;
         }
 
@@ -210,8 +210,13 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cde-institucional.css') }}">
 </head>
-<body>
+<body class="cde-ui cde-confirmation">
+    <header class="cde-public-header">
+        <a class="cde-wordmark" href="{{ url_for('ciudadano') }}"><span class="cde-monogram">CDE</span><span>Municipalidad de<br><strong>Ciudad del Este</strong></span></a>
+        <a class="cde-header-link" href="{{ url_for('ciudadano') }}">{{ icon('arrow-left') }} <span>Reporte Ciudadano</span></a>
+    </header>
     <div class="confirmation-card">
         <div class="top-banner">
             <div class="icon">✓</div>
@@ -271,7 +276,7 @@
                     <div class="label">Ubicación en mapa</div>
                     <div class="value">
                         <a href="{{ reporte.mapa_url }}" target="_blank" class="btn-mapa">
-                            📍 Ver en Google Maps
+                            {{ icon('map-pin') }} Ver en Google Maps
                         </a>
                     </div>
                 </div>
