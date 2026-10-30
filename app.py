@@ -391,23 +391,30 @@ def inicializar_bd():
             print(f"Migración omitida: {e_mig}")
     conexion.commit()
 
-    # Usuario admin inicial
-    cursor.execute("SELECT * FROM usuarios WHERE usuario = %s LIMIT 1", ("admin",))
+    # Usuario admin inicial (ADMIN_USER / ADMIN_PASSWORD se sincronizan en cada arranque)
+    admin_usuario = os.environ.get("ADMIN_USER", "admin")
+    password_inicial_admin = os.environ.get("ADMIN_PASSWORD", "Admin@2026!")
+    cursor.execute("SELECT * FROM usuarios WHERE usuario = %s LIMIT 1", (admin_usuario,))
     admin_existente = cursor.fetchone()
+    password_hash = generate_password_hash(password_inicial_admin)
 
     if not admin_existente:
-        password_inicial_admin = os.environ.get("ADMIN_PASSWORD", "Admin@2026!")
-        password_hash = generate_password_hash(password_inicial_admin)
         cursor.execute("""
             INSERT INTO usuarios (nombre, usuario, password, rol, activo)
             VALUES (%s, %s, %s, %s, %s)
         """, (
             "Administrador General",
-            "admin",
+            admin_usuario,
             password_hash,
             "admin",
             True
         ))
+        conexion.commit()
+    elif os.environ.get("ADMIN_PASSWORD"):
+        cursor.execute(
+            "UPDATE usuarios SET password = %s, rol = 'admin', activo = TRUE WHERE usuario = %s",
+            (password_hash, admin_usuario),
+        )
         conexion.commit()
 
     cursor.execute("SELECT id, tipo, prioridad FROM reportes")
